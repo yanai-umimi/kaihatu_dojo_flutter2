@@ -1,37 +1,49 @@
 import 'package:flutter/material.dart';
-
-import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kaihatu_dojo/bottom_navigation/bottom_navigation_bloc.dart';
-import 'package:kaihatu_dojo/ui/app_screen.dart';
-import 'package:kaihatu_dojo/ui/pages/first_page.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:path_provider/path_provider.dart';
 
-import 'repositories/repositories.dart';
+import 'bottom_navigation/bottom_navigation_bloc.dart';
+import 'ui/router/app_router.dart';
 
-class SimpleBlocObserver extends BlocObserver {
-  @override
-  void onTransition(Bloc bloc, Transition transition) {
-    super.onTransition(bloc, transition);
-    print(transition);
-  }
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final storage = await HydratedStorage.build(
+    storageDirectory: await getTemporaryDirectory(),
+  );
+  HydratedBlocOverrides.runZoned(
+    () => runApp(
+      MyApp(appRouter: AppRouter()),
+    ),
+    storage: storage,
+  );
 }
 
-void main() {
-  Bloc.observer = SimpleBlocObserver();
-  runApp(App());
-}
+class MyApp extends StatelessWidget {
+  final AppRouter appRouter;
 
-class App extends StatelessWidget {
+  const MyApp({Key? key, required this.appRouter}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: BlocProvider<BottomNavigationBloc>(
-        create: (context) => BottomNavigationBloc(
-          FirstPageRepository(),
-          SecondPageRepository(),
-        )..add(AppStarted()),
-        child: AppScreen(),
+    return MultiBlocProvider(
+      providers: _buildBlocProviders(context),
+      child: MaterialApp(
+        title: 'BookShelf',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        onGenerateRoute: appRouter.onGenerateRoute,
       ),
     );
+  }
+
+  List<BlocProvider> _buildBlocProviders(BuildContext context) {
+    return [
+      BlocProvider<BottomNavigationBloc>(
+        create: (context) => BottomNavigationBloc()..add(AppStarted()),
+      ),
+    ];
   }
 }

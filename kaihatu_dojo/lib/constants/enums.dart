@@ -1,0 +1,1 @@
+enum NavBarItem { home, mypage }

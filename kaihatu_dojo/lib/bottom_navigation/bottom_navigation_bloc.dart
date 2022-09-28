@@ -1,62 +1,102 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
-
-import '../../repositories/repositories.dart';
+import 'package:flutter/material.dart';
+import '../constants/enums.dart';
+// import 'package:preloved/data/models/home/recently_viewed_item.dart';
+// import 'package:preloved/data/repositories/home/home_screen_repository.dart';
 
 part 'bottom_navigation_event.dart';
 part 'bottom_navigation_state.dart';
 
 class BottomNavigationBloc
     extends Bloc<BottomNavigationEvent, BottomNavigationState> {
-  BottomNavigationBloc(this.firstPageRepository, this.secondPageRepository)
-      : assert(firstPageRepository != null),
-        assert(secondPageRepository != null),
-        super(PageLoading());
+  BottomNavigationBloc()
+      : super(
+          const ScreenLoading(
+            navBarItem: NavBarItem.home,
+            index: 0,
+          ),
+        ) {
+    on<AppStarted>(_onAppStarted);
+    on<BottomNavigationBarTapped>(_onBottomNavigationBarTapped);
+  }
 
-  final FirstPageRepository firstPageRepository;
-  final SecondPageRepository secondPageRepository;
-  int currentIndex = 0;
+  void _onAppStarted(AppStarted event, Emitter<BottomNavigationState> emit) {
+    add(
+      const BottomNavigationBarTapped(
+        navBarItem: NavBarItem.home,
+        index: 0,
+      ),
+    );
+  }
 
-  @override
-  Stream<BottomNavigationState> mapEventToState(
-      BottomNavigationEvent event) async* {
-    if (event is AppStarted) {
-      this.add(PageTapped(index: this.currentIndex));
-    }
-    if (event is PageTapped) {
-      this.currentIndex = event.index;
-      yield CurrentIndexChanged(currentIndex: this.currentIndex);
-      yield PageLoading();
-
-      if (this.currentIndex == 0) {
-        String data = await _getFirstPageData();
-        yield FirstPageLoaded(text: data);
-      }
-      if (this.currentIndex == 1) {
-        int data = await _getSecondPageData();
-        yield SecondPageLoaded(number: data);
-      }
+  void _onBottomNavigationBarTapped(BottomNavigationBarTapped event,
+      Emitter<BottomNavigationState> emit) async {
+    switch (event.index) {
+      case 0:
+        await emitHomeScreenState(event, emit);
+        break;
+      case 1:
+        emit(
+          SearchScreenLoaded(
+            navBarItem: event.navBarItem,
+            index: event.index,
+            data: 0,
+          ),
+        );
+        break;
+      case 2:
+        emit(
+          SellItemsScreenLoaded(
+            navBarItem: event.navBarItem,
+            index: event.index,
+            data: 0,
+          ),
+        );
+        break;
+      case 3:
+        emit(
+          MessageScreenLoaded(
+            navBarItem: event.navBarItem,
+            index: event.index,
+            data: 0,
+          ),
+        );
+        break;
+      case 4:
+        emit(
+          MyPageScreenLoaded(
+            navBarItem: event.navBarItem,
+            index: event.index,
+            data: 0,
+          ),
+        );
+        break;
     }
   }
 
-  Future<String> _getFirstPageData() async {
-    String data = firstPageRepository.data;
-    if (data == null) {
-      await firstPageRepository.fetchData();
-      data = firstPageRepository.data;
+  Future<void> emitHomeScreenState(
+    BottomNavigationBarTapped event,
+    Emitter<BottomNavigationState> emit,
+  ) async {
+    if (state is! HomeScreenLoaded) {
+      //HomeScreenRepository repo = HomeScreenRepository();
+      emit(
+        ScreenLoading(
+          navBarItem: event.navBarItem,
+          index: event.index,
+        ),
+      );
+      //List<RecentlyViewedItem> data = await repo.getRecentlyViewedItem();
+      if (state is ScreenLoading) {
+        emit(
+          HomeScreenLoaded(
+            navBarItem: event.navBarItem,
+            index: event.index,
+            data: ['s'],
+          ),
+        );
+      }
     }
-    return data;
-  }
-
-  Future<int> _getSecondPageData() async {
-    int data = secondPageRepository.data;
-    if (data == null) {
-      await secondPageRepository.fetchData();
-      data = secondPageRepository.data;
-    }
-    return data;
   }
 }

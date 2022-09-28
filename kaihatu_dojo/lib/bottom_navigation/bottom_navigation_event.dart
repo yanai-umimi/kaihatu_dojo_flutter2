@@ -1,5 +1,6 @@
 part of 'bottom_navigation_bloc.dart';
 
+@immutable
 abstract class BottomNavigationEvent extends Equatable {
   const BottomNavigationEvent();
 
@@ -9,14 +10,20 @@ abstract class BottomNavigationEvent extends Equatable {
 
 class AppStarted extends BottomNavigationEvent {
   @override
-  String toString() => 'AppStarted';
+  String toString() => 'AppStarted()';
 }
 
-class PageTapped extends BottomNavigationEvent {
+class BottomNavigationBarTapped extends BottomNavigationEvent {
+  final NavBarItem navBarItem;
   final int index;
 
-  PageTapped({required this.index});
+  const BottomNavigationBarTapped(
+      {required this.navBarItem, required this.index});
 
   @override
-  String toString() => 'PageTapped: $index';
+  List<Object> get props => [navBarItem, index];
+
+  @override
+  String toString() =>
+      'BottomNavigationBarTapped(navBarItem: $navBarItem, index: $index)';
 }
