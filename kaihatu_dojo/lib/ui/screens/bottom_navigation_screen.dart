@@ -6,6 +6,7 @@ import '../../constants/enums.dart';
 import '../../constants/pallete.dart';
 import '../../logic/bottom_navigation/bottom_navigation_bloc.dart';
 import '../widgets/loading_view.dart';
+import 'book_shelf_screen.dart';
 import 'my_page_screen.dart';
 
 class BottomNavigationScreen extends StatelessWidget {
@@ -43,7 +44,7 @@ class BottomNavigationScreen extends StatelessWidget {
       return const LoadingView();
     }
     if (NavBarItem.values[index] == NavBarItem.home) {
-      return HomeScreen(text: 'op');
+      return const BookShelfScreen();
     } else if (NavBarItem.values[index] == NavBarItem.mypage) {
       return MyPageScreen(
         number: 0,

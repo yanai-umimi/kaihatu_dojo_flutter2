@@ -1,12 +1,15 @@
-import 'dart:convert';
+import 'package:kaihatu_dojo/data/models/books/books.dart';
+import 'package:http/http.dart' as http;
 
-class BooksAPI {
-  Future<dynamic> getRawRecentlyViewedItems() async {
-    dynamic data = json.encode([
-      {'id': 1, 'price': 1000, 'itemName': 'First item'},
-      {'id': 2, 'price': 1500, 'itemName': 'Second item'},
-    ]);
-    await Future.delayed(const Duration(milliseconds: 200));
-    return data;
+class BookProvider {
+  Future<Book?> getBooks() async {
+    var client = http.Client();
+    var uri = Uri.parse('https://jsonplaceholder.typicode.com');
+    var response = await client.get(uri);
+    if (response.statusCode == 200) {
+      var json = response.body;
+      return bookFromJson(json);
+    }
+    return null;
   }
 }
