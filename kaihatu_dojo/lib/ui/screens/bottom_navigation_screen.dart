@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kaihatu_dojo/ui/screens/home_screen.dart';
 
-import '../../bottom_navigation/bottom_navigation_bloc.dart';
 import '../../constants/enums.dart';
 import '../../constants/pallete.dart';
+import '../../logic/bottom_navigation/bottom_navigation_bloc.dart';
 import '../widgets/loading_view.dart';
 import 'my_page_screen.dart';
 

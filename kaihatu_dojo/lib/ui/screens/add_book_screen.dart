@@ -1,10 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import '../../constants/pallete.dart';
+import 'package:http/http.dart' as http;
 
 class AddBookScreen extends StatelessWidget {
-  final String text;
+  List items = [];
 
-  AddBookScreen({required this.text}) : super();
+  AddBookScreen() : super();
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +26,39 @@ class AddBookScreen extends StatelessWidget {
         // ),
       ),
       body: Center(
-        child: Text('こここ: $text'),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 200, right: 30, left: 30),
+              child: Column(
+                children: [
+                  const TextField(
+                    enabled: true,
+                    maxLines: 1,
+                    obscureText: false,
+                    decoration: InputDecoration(
+                      hintText: 'ISBN',
+                      labelText: 'ISBN',
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 50),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pushNamed('/screens/confirm_book',
+                            arguments: 'PPP');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Palette.primaryColor,
+                      ),
+                      child: const Text('本を追加する'),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

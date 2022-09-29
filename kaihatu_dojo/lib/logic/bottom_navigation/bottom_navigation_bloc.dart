@@ -1,10 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import '../constants/enums.dart';
-// import 'package:preloved/data/models/home/recently_viewed_item.dart';
-// import 'package:preloved/data/repositories/home/home_screen_repository.dart';
 
+import '../../constants/enums.dart';
 part 'bottom_navigation_event.dart';
 part 'bottom_navigation_state.dart';
 

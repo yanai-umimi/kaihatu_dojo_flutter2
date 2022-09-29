@@ -1,45 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
 import '../../constants/pallete.dart';
+import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatelessWidget {
   final String text;
 
   HomeScreen({required this.text}) : super();
-
+  List items = [];
   @override
   Widget build(BuildContext context) {
-    var _viewData = <Widget>[
-      Container(
-        color: Colors.red,
-        child: Text(
-          "1",
-          style: TextStyle(
-              fontSize: 32.0,
-              fontWeight: FontWeight.w400,
-              fontFamily: "Roboto"),
-        ),
-      ),
-      Container(
-        color: Colors.blue,
-        child: Text(
-          "2",
-          style: TextStyle(
-              fontSize: 32.0,
-              fontWeight: FontWeight.w400,
-              fontFamily: "Roboto"),
-        ),
-      ),
-      Container(
-        color: Colors.green,
-        child: Text(
-          "3",
-          style: TextStyle(
-              fontSize: 32.0,
-              fontWeight: FontWeight.w400,
-              fontFamily: "Roboto"),
-        ),
-      ),
-    ];
     return Scaffold(
       appBar: AppBar(
         title: const Text('本棚'),
@@ -59,29 +31,59 @@ class HomeScreen extends StatelessWidget {
               Navigator.of(context).pushNamed('/screens/add_book'),
             },
             icon: const Icon(
-              Icons.filter_9_plus_outlined,
+              Icons.add_circle,
               color: Colors.white,
             ),
           )
         ],
       ),
-      body: GridView.count(
-        crossAxisCount: 3,
-        mainAxisSpacing: 10.0,
-        crossAxisSpacing: 10.0,
-        padding: const EdgeInsets.all(10),
-        children: List.generate(
-          200,
-          (index) => Container(
-            color: Colors.blueGrey,
-            child: Center(
-              child: Text(
-                'Item $index',
-                style: Theme.of(context).textTheme.headline5,
-              ),
-            ),
+      body: Column(
+        children: [
+          ElevatedButton(
+            onPressed: () async {
+              var response = await http.get(Uri.https(
+                  'www.googleapis.com', '/books/v1/volumes', {
+                'q': '{Flutter}',
+                'maxResults': '40',
+                'langRestrict': 'ja'
+              }));
+
+              var jsonResponse = jsonDecode(response.body);
+
+              items = jsonResponse['items'];
+            },
+            child: Text('fetch'),
           ),
-        ),
+          // GridView.count(
+          //     crossAxisCount: 3,
+          //     mainAxisSpacing: 8,
+          //     crossAxisSpacing: 8,
+          //     padding: const EdgeInsets.all(8),
+          //     children: )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildList(BuildContext context) {
+    return Expanded(
+      child: ListView.builder(
+        itemCount: items.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Card(
+            child: Column(
+              children: <Widget>[
+                ListTile(
+                  leading: Image.network(
+                    items[index]['volumeInfo']['imageLinks']['thumbnail'],
+                  ),
+                  title: Text(items[index]['volumeInfo']['title']),
+                  subtitle: Text(items[index]['volumeInfo']['publishedDate']),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

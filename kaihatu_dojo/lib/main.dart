@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'bottom_navigation/bottom_navigation_bloc.dart';
+import 'logic/bottom_navigation/bottom_navigation_bloc.dart';
 import 'ui/router/app_router.dart';
 
 void main() async {
